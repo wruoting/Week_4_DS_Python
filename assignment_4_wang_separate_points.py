@@ -73,15 +73,12 @@ def make_trade(cash, open, close):
     shares = np.divide(cash, open)
     return np.multiply(shares, close)
 
-def trading_strategy(trading_df, is_predicted, weekly_balance=100):
+def trading_strategy(trading_df, prediction_label, weekly_balance=100):
     '''
     trading_df: dataframe of relevant weekly data
+    prediction_label: the label for which we're going to trade off of
     returns: A df of trades made based on Predicted Labels
     '''
-    if is_predicted:
-        labels = 'Predicted Labels'
-    else:
-        labels = 'Classification'
     # The weekly balance we will be using
     weekly_balance_acc = weekly_balance
     trading_history = deque()
@@ -91,7 +88,7 @@ def trading_strategy(trading_df, is_predicted, weekly_balance=100):
         trading_week_index = index
         if weekly_balance_acc != 0:
             # Find the next consecutive green set of weeks and trade on them
-            while(trading_week_index < len(trading_df.index) - 1 and trading_df.iloc[trading_week_index][[labels]].values[0] == 'GREEN'):
+            while(trading_week_index < len(trading_df.index) - 1 and trading_df.iloc[trading_week_index][[prediction_label]].values[0] == 'GREEN'):
                 trading_week_index += 1
             green_weeks = trading_df.iloc[index:trading_week_index][['Week Open', 'Week Close']]
             # Check if there are green weeks, and if there are not, we add a row for trading history
@@ -156,10 +153,11 @@ def main():
     print('Trading Strategy for 2019 for $100 starting cash:')
     print('Trading strategy was based on the one created in Assignment 3')
     print('With Predicted Labels:')
-    predicted_trading_df = trading_strategy(trading_weeks_2019, True)
+    predicted_trading_df = trading_strategy(trading_weeks_2019, 'Predicted Labels')
     print('${}'.format(predicted_trading_df[['Balance']].iloc[-1].values[0]))
     print('With Self Classifications')
-    classification_trading_df = trading_strategy(trading_weeks_2019, False)
+    classification_trading_df = trading_strategy(trading_weeks_2019, 'Classification')
     print('${}'.format(classification_trading_df[['Balance']].iloc[-1].values[0]))
+
 if __name__ == "__main__":
     main()
