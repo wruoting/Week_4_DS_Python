@@ -59,14 +59,17 @@ def weekly_return_volatility(ticker_file, output_file):
 def graph_plot(year, df):
     '''
     year: string of year to plot
-    df: dataframe of interest
+    df: dataframe of interest to plot
     return: None
     '''
-    # Change our scale to be from 0 - 10
+    # Change our scale to be from 0 - 10 to get bigger (and standardized) points
     scaled_diff = np.divide(df['Abs_Diff'], np.mean(df['Abs_Diff']))
     ax = df.plot.scatter(x='mean_return', y='volatility', s=scaled_diff * 10, c=df['Classification'],  title='WMT Mean to Std Dev {}'.format(year))
     ax.set_xlabel('Mean Weekly Return (%)')
     ax.set_ylabel('Std Dev Weekly Return (%)')
+    # Label each point on the graph
+    for i, point in df.iterrows():
+        ax.text(point['mean_return'], point['volatility'], i, fontsize=6)
     plt.savefig(fname='Examine_Labels_Plot_{}'.format(year))
     plt.show()
     plt.close()
@@ -84,23 +87,28 @@ def main():
     df = pd.read_csv(file_name, encoding='ISO-8859-1')
     df_2018 = df[df['Year'] == 2018]
     df_2019 = df[df['Year'] == 2019]
+    df_2019.reset_index(inplace=True)
+
     # Graph each year
+    print('You can zoom in and out in matplotlib to see the labels.')
     graph_plot('2018_2019', df)
     graph_plot('2018', df_2018)
     graph_plot('2019', df_2019)
 
 
     print('Images to look at are called: Examine_Labels_Plot_2018.png and Examine_Labels_Plot_2019.png')
+    print('Both years are in Examine_Labels_Plot_2018_2019.png')
     print('\nQuestion 1:')
     print('The obvious pattern here is that the majority of the points are clustered within one or two standard deviations of the returns ')
     print('and one to two percent within the mean.')
-    print('The original labeling was done from open to close, not close to close, so therefore there are some points on here ')
-    print('which are green when weekly returns are less than 0 and red when they are greater than 0. There are also green weeks where we ')
+    print('The original labeling was done based on open to close prices, not close to close prices, so therefore there are some points on here ')
+    print('which are green when weekly returns are less than 0 and red when they are greater than 0. There are also positive return weeks where we ')
     print('don\'t trade because we considered the volatility to be too high.')
-    print('When there are smaller average weekly returns, the dots are smaller, so the size of the dots correlates with average weekly return. The ')
-    print('greater the absolute return, the greater the size of the dot. Most red days have negative weekly returns, but ')
-    print('there are some "bad" days with positive weekly returns.')
-    print('2018 seems to have some weeks with big volatility, while 2019 did not have some of those high volatility weeks.')
+    print('When there are smaller average weekly returns, the dots are smaller, so the size of the dots (weekly return) correlates with average daily return for that week. The ')
+    print('greater the average daily return, the greater the weekly return, and the inverse is also true. Most red days have negative average daily returns, but ')
+    print('there are some "bad" days with positive average daily returns.')
+    print('2018 seems to have some weeks with big volatility, while 2019 did not have some of those high volatility weeks. Higher volatility does not necessarily mean ')
+    print('negative returns, but I did choose to not trade on those weeks due to volatility, resulting in more red weeks with high volatility.')
 
     print('\nQuestion 2:')
     print('Generally, it seems that some green points cluster with green points, and some red points are clustered together as well.')
@@ -109,12 +117,13 @@ def main():
 
     print('\nQuestion 3:')
     print('There are some patterns that are similar, like the grouping of points near 1% of weekly returns, and within 2 std. deviations ')
-    print('2018 seems to have some weeks with greater weekly losses than 2019.')
+    print('2018 seems to have some weeks with greater weekly losses than 2019. In addition, the smaller dot size correlates with less variance')
+    print('and average daily returns for both years.')
 
     print('\nQuestion 4:')
     print('I expect nearest neighbors to do well for neither model, since there does not seem to be a set of clusters for ')
-    print('either year. 2018 does seem to have a cluster for green points, and that may present slightly better results ')
-    print('than 2019.')
+    print('either year. There should be some decent overlap based off of the orientation of the clustering within 2 std deviations and a 0% average daily return. ')
+    print('Hopefully that consistently in pattern between the two years provides trades that can show good performance.')
 
 if __name__ == "__main__":
     main()

@@ -135,7 +135,7 @@ def main():
     label_points(df_2018, '2018', 'Separate_Points_Plot_2018_Post')
     print('Now we draw the line')
     label_points_add_line(df_2018, '2018', 'Separate_Points_Plot_2018_With_Line')
-    
+    print('The equation of this line is: y = 5x+1.7 where y is sigma and x is mu.')
     print('\nQuestion 2')
     print('Assign labels for equation y = 5x+1.7')
     df_y_predicted = 5*df_2019[['mean_return']]+1.7
@@ -158,6 +158,7 @@ def main():
     print('With Self Classifications')
     classification_trading_df = trading_strategy(trading_weeks_2019, 'Classification')
     print('${}'.format(classification_trading_df[['Balance']].iloc[-1].values[0]))
+    print('This predicted trading strategy did better than our self labeled classification strategy for 2019.')
 
 if __name__ == "__main__":
     main()

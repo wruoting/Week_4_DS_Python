@@ -45,7 +45,7 @@ def main():
     plt.show()
     plt.close()
     print('Error rate is {}'.format(error_rate))
-    print('Lowest error is 9 nearest neighbors, so that is the optimal k value for year 1')
+    print('Lowest error is 9 nearest neighbors, so that is the optimal k value for year 1 (2018)')
 
     print('\nQuestion 2')
     X_2019 = df_2019[['mean_return', 'volatility']].values
@@ -54,6 +54,7 @@ def main():
     knn_classifier.fit(X, Y.ravel())
     prediction = knn_classifier.predict(X_2019)
     accuracy_2019 = np.round(np.multiply(np.mean(prediction == Y_2019), 100), 2)
+    print('Using 9 KNN classifier to predict accuracy for 2019.')
     print('Accuracy: {}%'.format(accuracy_2019))
 
     print('\nQuestion 3')
